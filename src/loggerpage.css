@@ -1,0 +1,82 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #131313; /* Black background */
+    color: #ffffff; /* White text for contrast */
+    text-align: center;
+}
+
+h1, h2, h3 {
+    text-align: center;
+    color: #1e90ff; /* Dark blue color for headings */
+}
+
+form {
+    display: inline-block;
+    margin-bottom: 20px;
+    background-color: #1e1e1e; /* Dark gray background for form */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column; /* Stack label and input vertically */
+    margin: 5px; /* Add margin for spacing */
+}
+
+.input-group label {
+    margin-bottom: 5px; /* Space between label and input */
+}
+
+.input-row {
+    display: flex; /* Align input groups horizontally */
+    justify-content: center; /* Center horizontally */
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+}
+
+input[type="number"], input[type="date"] {
+    background-color: #333; /* Dark gray background for input fields */
+    color: #ffffff; /* White text for input fields */
+    width: 100px; /* Set a fixed width for inputs */
+}
+
+button {
+    background-color: #1e90ff; /* Dark blue button */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px; /* Space above the button */
+}
+
+button:hover {
+    background-color: #007acc; /* Lighter blue on hover */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px auto;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #555; /* Darker border color for the table */
+    cursor: pointer;
+}
+
+th {
+    background-color: #1e90ff; /* Dark blue for table headers */
+    color: #ffffff; /* White text for headers */
+}
+
+tbody tr {
+    background-color: #1e1e1e; /* Dark gray background for workout rows */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+tbody tr:hover {
+    background-color: #007acc; /* Lighter blue on row hover */
+}

@@ -1,0 +1,83 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #131313; /* Black background */
+    color: #ffffff; /* White text for contrast */
+    text-align: center;
+}
+
+h1, h2 {
+    text-align: center;
+    color: #1e90ff; /* Dark blue color for headings */
+}
+
+form {
+    display: inline-block;
+    margin-bottom: 20px auto;
+    background-color: #1e1e1e; /* Dark gray background for form */
+    padding: 25px 100px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+label, input, button {
+    display: block;
+    margin: 10px auto;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+}
+
+input[type="text"], input[type="number"], input[type="date"] {
+    background-color: #333; /* Dark gray background for input fields */
+    color: #ffffff; /* White text for input fields */
+}
+
+button {
+    background-color: #1e90ff; /* Dark blue button */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #007acc; /* Lighter blue on hover */
+}
+
+#searchBar {
+    width: 50%;
+    margin: 20px auto; /* Center the search bar */
+    padding: 10px;
+    background-color: #333; /* Dark gray for search bar */
+    color: #ffffff; /* White text for search bar */
+    border: none;
+    border-radius: 4px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px auto;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #555; /* Darker border color for the table */
+    cursor: pointer;
+}
+
+th {
+    background-color: #0d5398; /* Dark blue for table headers */
+    color: #ffffff; /* White text for headers */
+}
+
+tbody tr {
+    background-color: #295b9c; /* Dark gray background for exercise rows */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+tbody tr:hover {
+    background-color: #0f748e; /* Lighter blue on row hover */
+}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { db } from "./firebase"; // Import Firebase setup
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { db, auth } from "./firebase"; // Import Firebase setup
+import { collection, addDoc, getDocs, query, where } from "firebase/firestore"; // For querying
 import "./loggerpage.css";
 
 const LogPage = () => {
@@ -16,15 +16,24 @@ const LogPage = () => {
   });
   const [workoutHistory, setWorkoutHistory] = useState([]);
 
-  // Fetch workout history from Firebase when the component mounts
+  // Fetch workout history for the current user and exercise
   useEffect(() => {
     const fetchWorkoutHistory = async () => {
-      const querySnapshot = await getDocs(collection(db, "workouts"));
-      const history = querySnapshot.docs.map((doc) => doc.data());
-      setWorkoutHistory(history);
+      if (auth.currentUser) {
+        const userId = auth.currentUser.uid; // Get current user ID
+        const workoutCollection = collection(db, "workouts");
+        const workoutQuery = query(
+          workoutCollection,
+          where("userId", "==", userId), // Filter by current user
+          where("exerciseName", "==", exerciseName) // Filter by exercise
+        );
+        const querySnapshot = await getDocs(workoutQuery);
+        const history = querySnapshot.docs.map((doc) => doc.data());
+        setWorkoutHistory(history);
+      }
     };
     fetchWorkoutHistory();
-  }, []);
+  }, [exerciseName]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -33,10 +42,19 @@ const LogPage = () => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    // Add the new log to Firestore
-    await addDoc(collection(db, "workouts"), formData);
-    setWorkoutHistory((prev) => [...prev, formData]);
-    setFormData({ weight: "", sets: "", reps: "", date: "" });
+    if (auth.currentUser) {
+      const userId = auth.currentUser.uid; // Get current user ID
+      const newLog = {
+        ...formData,
+        userId: userId, // Store the user ID
+        exerciseName: exerciseName, // Store exercise name
+      };
+
+      // Add the new log to Firestore
+      await addDoc(collection(db, "workouts"), newLog);
+      setWorkoutHistory((prev) => [...prev, newLog]);
+      setFormData({ weight: "", sets: "", reps: "", date: "" });
+    }
   };
 
   return (

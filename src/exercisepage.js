@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore"; // Import Firestore functions
 import {
-  auth,
-  db,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  doc,
-  setDoc,
-  getDoc,
-} from "./firebase"; // Correct path
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore"; // Import Firestore functions
+import { auth, db } from "./firebase"; // Correct path
 import "./exercisepage.css";
 
 const ExercisePage = () => {
@@ -22,10 +20,19 @@ const ExercisePage = () => {
   // Fetch exercises from Firestore when the component mounts
   useEffect(() => {
     const fetchExercises = async () => {
-      const exerciseCollection = collection(db, "exercises");
-      const exerciseSnapshot = await getDocs(exerciseCollection);
-      const exerciseData = exerciseSnapshot.docs.map((doc) => doc.data().name);
-      setExerciseList(exerciseData);
+      if (auth.currentUser) {
+        const userId = auth.currentUser.uid; // Get current user ID
+        const exerciseCollection = collection(db, "exercises");
+        const exerciseQuery = query(
+          exerciseCollection,
+          where("userId", "==", userId) // Only fetch exercises for the current user
+        );
+        const exerciseSnapshot = await getDocs(exerciseQuery);
+        const exerciseData = exerciseSnapshot.docs.map(
+          (doc) => doc.data().name
+        );
+        setExerciseList(exerciseData);
+      }
     };
     fetchExercises();
   }, []);
@@ -33,13 +40,16 @@ const ExercisePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (exerciseName.trim()) {
-      // Add exercise to Firestore
       try {
-        await addDoc(collection(db, "exercises"), {
-          name: exerciseName,
-        });
-        setExerciseList((prevList) => [...prevList, exerciseName]);
-        setExerciseName("");
+        if (auth.currentUser) {
+          const userId = auth.currentUser.uid;
+          await addDoc(collection(db, "exercises"), {
+            name: exerciseName,
+            userId: userId, // Store the userId with each exercise
+          });
+          setExerciseList((prevList) => [...prevList, exerciseName]);
+          setExerciseName("");
+        }
       } catch (error) {
         console.error("Error adding exercise: ", error);
       }

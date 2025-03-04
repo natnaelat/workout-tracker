@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  Navigate,
+} from "react-router-dom";
 import {
   GoogleAuthProvider,
   signInWithRedirect,
@@ -70,38 +76,7 @@ function App() {
     return <div>Loading...</div>;
   }
 
-  if (!user) {
-    return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-          background: "#141414",
-          color: "white",
-        }}
-      >
-        <h1 style={{ marginBottom: "20px" }}>Workout Tracker</h1>
-        <button
-          style={{
-            padding: "15px 25px",
-            fontSize: "18px",
-            background: "#0e3c91",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-          onClick={handleSignIn}
-        >
-          Sign In with Google
-        </button>
-      </div>
-    );
-  }
-
+  // Main application rendering
   return (
     <Router>
       <div className="App">
@@ -132,9 +107,15 @@ function App() {
                 </Link>
               </li>
               <li className="navbar__btn">
-                <button className="button" onClick={signOutRedirect}>
-                  Sign Out
-                </button>
+                {user ? (
+                  <button className="button" onClick={signOutRedirect}>
+                    Sign Out
+                  </button>
+                ) : (
+                  <button className="button" onClick={handleSignIn}>
+                    Sign In
+                  </button>
+                )}
               </li>
             </ul>
           </div>
@@ -152,10 +133,15 @@ function App() {
                     <div className="main__content">
                       <h1>Improve Your Health.</h1>
                       <h2>Reach Your Goals.</h2>
-                      {/* Change to Link for navigation */}
-                      <Link to="/exercise">
-                        <button className="main__btn">Get Started</button>
-                      </Link>
+                      {user ? (
+                        <Link to="/exercise">
+                          <button className="main__btn">Get Started</button>
+                        </Link>
+                      ) : (
+                        <button className="main__btn" onClick={handleSignIn}>
+                          Get Started
+                        </button>
+                      )}
                     </div>
                     <div className="main__img--container">
                       <img
@@ -172,22 +158,38 @@ function App() {
                     <div className="services__card">
                       <h2>See Change</h2>
                       <p>Start Today</p>
-                      {/* Change to Link for navigation */}
-                      <Link to="/exercise">
-                        <button className="button get-started">
+                      {user ? (
+                        <Link to="/exercise">
+                          <button className="button get-started">
+                            Get Started
+                          </button>
+                        </Link>
+                      ) : (
+                        <button
+                          className="button get-started"
+                          onClick={handleSignIn}
+                        >
                           Get Started
                         </button>
-                      </Link>
+                      )}
                     </div>
                     <div className="services__card">
                       <h2>Are you Ready?</h2>
                       <p>Take the leap</p>
-                      {/* Change to Link for navigation */}
-                      <Link to="/exercise">
-                        <button className="button get-started">
+                      {user ? (
+                        <Link to="/exercise">
+                          <button className="button get-started">
+                            Get Started
+                          </button>
+                        </Link>
+                      ) : (
+                        <button
+                          className="button get-started"
+                          onClick={handleSignIn}
+                        >
                           Get Started
                         </button>
-                      </Link>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -195,9 +197,15 @@ function App() {
             }
           />
           {/* Exercise Page Route */}
-          <Route path="/exercise" element={<ExercisePage />} />
+          <Route
+            path="/exercise"
+            element={user ? <ExercisePage /> : <Navigate to="/" />}
+          />
           {/* Log Page Route */}
-          <Route path="/log" element={<LogPage />} />
+          <Route
+            path="/log"
+            element={user ? <LogPage /> : <Navigate to="/" />}
+          />
         </Routes>
       </div>
     </Router>

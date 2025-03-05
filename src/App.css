@@ -223,8 +223,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  padding: 20px;
-  z-index: 2;
+  position: relative;
 }
 
 .main__content h1 {
@@ -251,6 +250,7 @@
 
 /* Get started button in the middle of the screen */
 .main__btn {
+  /* Existing styles */
   font-size: 1rem;
   background-image: linear-gradient(to top, #03235f 0%, #1b52b7 100%);
   padding: 14px 32px;
@@ -259,10 +259,10 @@
   color: #fff;
   margin-top: 2rem;
   cursor: pointer;
-  position: relative;
-  transition: background 0.35s ease;
-  outline: none;
-  text-decoration: none; 
+  
+  /* New positioning styles */
+  align-self: flex-start;  /* Ensures button stays on the left */
+  justify-self: flex-start;
 }
 
 

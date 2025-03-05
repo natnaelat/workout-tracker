@@ -133,11 +133,7 @@ function App() {
                     <div className="main__content">
                       <h1>Improve Your Health.</h1>
                       <h2>Reach Your Goals.</h2>
-                      {user ? (
-                        <Link to="/exercise">
-                          <button className="main__btn">Get Started</button>
-                        </Link>
-                      ) : (
+                      {!user && (
                         <button className="main__btn" onClick={handleSignIn}>
                           Get Started
                         </button>

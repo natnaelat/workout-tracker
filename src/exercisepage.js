@@ -7,8 +7,6 @@ import {
   getDocs,
   query,
   where,
-  deleteDoc,
-  doc,
 } from "firebase/firestore"; // Import Firestore functions
 import { auth, db } from "./firebase"; // Correct path
 import "./exercisepage.css";
@@ -66,29 +64,6 @@ const ExercisePage = () => {
     navigate(`/log?exercise=${encodeURIComponent(exercise)}`);
   };
 
-  const handleDelete = async (name) => {
-    const confirmDelete = window.confirm("Delete this exercise?");
-    if (!confirmDelete) return;
-
-    if (auth.currentUser) {
-      const userId = auth.currentUser.uid;
-      const exerciseQuery = query(
-        collection(db, "exercises"),
-        where("userId", "==", userId),
-        where("name", "==", name)
-      );
-
-      const snapshot = await getDocs(exerciseQuery);
-      snapshot.forEach(async (docSnap) => {
-        await deleteDoc(doc(db, "exercises", docSnap.id));
-      });
-
-      setExerciseList((prevList) =>
-        prevList.filter((exercise) => exercise !== name)
-      );
-    }
-  };
-
   const filteredExercises = exerciseList.filter((exercise) =>
     exercise.toLowerCase().includes(searchTerm)
   );
@@ -128,16 +103,8 @@ const ExercisePage = () => {
         </thead>
         <tbody>
           {filteredExercises.map((exercise, index) => (
-            <tr key={index}>
-              <td
-                onClick={() => handleRowClick(exercise)}
-                style={{ cursor: "pointer" }}
-              >
-                {exercise}
-              </td>
-              <td>
-                <button onClick={() => handleDelete(exercise)}>🗑️</button>
-              </td>
+            <tr key={index} onClick={() => handleRowClick(exercise)}>
+              <td>{exercise}</td>
             </tr>
           ))}
         </tbody>

@@ -9,7 +9,7 @@ const currentDomain = window.location.hostname;
 // Your Firebase configuration
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: currentDomain, // This will use whichever domain the user is currently on
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN, // This will use whichever domain the user is currently on
   projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
   storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,

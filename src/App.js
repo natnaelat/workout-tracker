@@ -9,6 +9,7 @@ import {
 import {
   GoogleAuthProvider,
   signInWithRedirect,
+  signInWithPopup,
   getRedirectResult,
   signOut,
   onAuthStateChanged,
@@ -25,41 +26,61 @@ function App() {
   useEffect(() => {
     console.log("App component mounted");
 
-    // Handle auth state changes first
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      console.log(
-        "Auth state changed:",
-        currentUser ? "User logged in" : "No user"
-      );
-      setUser(currentUser);
+      if (currentUser) {
+        console.log("User logged in:", currentUser.email);
+        setUser(currentUser);
+      } else {
+        console.log("No user logged in");
+        setUser(null);
+      }
       setLoading(false);
     });
 
-    // Then check for redirect results
-    const checkRedirectResult = async () => {
-      try {
-        console.log("Checking redirect result...");
-        const result = await getRedirectResult(auth);
+    // Handle redirect result after Google sign-in
+    console.log("Checking redirect result; location:", window.location.href);
+    getRedirectResult(auth)
+      .then((result) => {
+        console.log("getRedirectResult resolved:", result);
         if (result?.user) {
-          console.log("User signed in after redirect:", result.user.email);
+          console.log("User signed in via redirect:", result.user.email);
+          setUser(result.user);
         }
-      } catch (error) {
+      })
+      .catch((error) => {
         console.error("Redirect result error:", error);
-      }
-    };
-
-    checkRedirectResult();
+      });
 
     return () => unsubscribe();
   }, []);
 
+
   const handleSignIn = () => {
     console.log("Initiating sign in...");
     const provider = new GoogleAuthProvider();
-    signInWithRedirect(auth, provider).catch((error) => {
-      console.error("Sign in error:", error);
-      setLoading(false);
-    });
+    setLoading(true);
+    // Use popup for local development to avoid full-page redirect
+    if (
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1"
+    ) {
+      console.log("Using signInWithPopup for local development");
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          console.log("Popup sign-in success", result.user?.email);
+          setUser(result.user);
+        })
+        .catch((error) => {
+          console.error("Popup sign-in error:", error);
+        })
+        .finally(() => setLoading(false));
+    } else {
+      console.log("Using signInWithRedirect for production");
+      signInWithRedirect(auth, provider).catch((error) => {
+        console.error("Sign in error:", error);
+        setLoading(false);
+      });
+    }
   };
 
   const signOutRedirect = () => {

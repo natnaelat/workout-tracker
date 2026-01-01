@@ -39,7 +39,7 @@ form {
 input[type="number"], input[type="date"] {
     background-color: #333; /* Dark gray background for input fields */
     color: #ffffff; /* White text for input fields */
-    width: 100px; /* Set a fixed width for inputs */
+    width: 115px; /* Set a fixed width for inputs */
 }
 
 button {
@@ -79,4 +79,101 @@ tbody tr {
 
 tbody tr:hover {
     background-color: #007acc; /* Lighter blue on row hover */
+}
+
+/* when hovering the delete or edit icon, prevent the row hover color */
+tbody tr.no-row-hover:hover {
+    background-color: #1e1e1e; /* same as default row color */
+}
+
+/* Delete icon styling to match exercise page */
+.delete-btn {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 50px; /* small gap from edit button */
+}
+
+.delete-btn:hover {
+    color: #e74c3c; /* same red as exercise page */
+    background: rgba(231,76,60,0.12); /* subtle red circle */
+    border-radius: 50%;
+}
+
+.delete-btn:focus {
+    outline: none;
+}
+
+/* edit / save / cancel buttons */
+.edit-btn, .save-btn, .cancel-btn {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    cursor: pointer;
+    font-size: 16px;
+    margin-right: 6px;
+}
+
+.edit-btn:hover {
+    color: #2ecc71; /* green for edit hover */
+    background: rgba(46,204,113,0.12); /* subtle green translucent circle */
+    border-radius: 50%;
+}
+
+.save-btn:hover {
+    color: #2ecc71; /* green for save */
+}
+
+.cancel-btn:hover {
+    color: #e74c3c; /* red for cancel */
+}
+
+.table-input {
+    width: 80px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    border: none;
+    background: #222;
+    color: #fff;
+}
+
+.table-date-input {
+    width: 120px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    border: none;
+    background: #222;
+    color: #fff;
+}
+
+/* action cell: reduce space and keep buttons close to the date */
+.action-cell {
+    width: 80px;
+    padding-left: 8px;
+    padding-right: 100px; /* keep buttons away from the right edge */
+    white-space: nowrap;
+    text-align: right; /* align buttons to the right side of the cell */
+}
+
+/* tighten button spacing */
+.edit-btn, .save-btn, .cancel-btn {
+    margin-right: 4px;
+}
+
+.delete-btn {
+    margin-right: 0;
 }

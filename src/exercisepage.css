@@ -13,7 +13,7 @@ h1, h2 {
 
 form {
     display: inline-block;
-    margin-bottom: 20px auto;
+    margin: 18px auto 28px;
     background-color: #1e1e1e; /* Dark gray background for form */
     padding: 25px 100px;
     border-radius: 10px;
@@ -80,4 +80,71 @@ tbody tr {
 
 tbody tr:hover {
     background-color: #0f748e; /* Lighter blue on row hover */
+}
+
+/* when hovering the delete icon, prevent the row hover color */
+tbody tr.no-row-hover:hover {
+    background-color: #295b9c; /* same as default row color */
+}
+
+/* Exercise cell: keep name and delete icon in the same row cell */
+.exercise-cell {
+    display: flex;
+    align-items: center;
+    padding: 6px 12px;
+}
+
+.delete-btn {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    width: 28px;
+    height: 28px;
+    flex: 0 0 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin-right: 12px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.delete-btn:hover {
+    color: #e74c3c; /* turn red on hover */
+}
+
+.delete-btn:focus {
+    outline: none;
+}
+
+.exercise-name {
+    flex: 1 1 auto;
+    text-align: center;
+    cursor: pointer;
+    color: #ffffff;
+}
+
+/* row hover (when hovering the exercise) */
+tbody tr:hover {
+  background-color: #0f748e; /* change this to the blue you want */
+  opacity: 1;                /* ensure full opacity */
+}
+
+/* when hovering the trash icon, keep row at normal color */
+tbody tr.no-row-hover:hover {
+  background-color: rgba(253, 3, 3, 0.367);
+}
+
+/* trash icon (no bg by default) */
+.delete-btn {
+  background: transparent;
+  color: #ffffff;        /* icon/text color when idle */
+}
+
+/* trash hover: icon turns red and gets a subtle circular bg */
+.delete-btn:hover {
+  color: #e74c3c;                            /* icon color on hover */
+  background: rgba(231,76,60,0.12);          /* light red translucent circle */
+  border-radius: 50%;
 }

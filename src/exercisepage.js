@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  getFirestore,
   collection,
   addDoc,
   getDocs,
   query,
   where,
+  writeBatch,
+  doc as firestoreDoc,
 } from "firebase/firestore"; // Import Firestore functions
 import { auth, db } from "./firebase"; // Correct path
 import "./exercisepage.css";
@@ -28,9 +29,10 @@ const ExercisePage = () => {
           where("userId", "==", userId) // Only fetch exercises for the current user
         );
         const exerciseSnapshot = await getDocs(exerciseQuery);
-        const exerciseData = exerciseSnapshot.docs.map(
-          (doc) => doc.data().name
-        );
+        const exerciseData = exerciseSnapshot.docs.map((d) => ({
+          id: d.id,
+          name: d.data().name,
+        }));
         setExerciseList(exerciseData);
       }
     };
@@ -43,16 +45,52 @@ const ExercisePage = () => {
       try {
         if (auth.currentUser) {
           const userId = auth.currentUser.uid;
-          await addDoc(collection(db, "exercises"), {
+          const newRef = await addDoc(collection(db, "exercises"), {
             name: exerciseName,
             userId: userId, // Store the userId with each exercise
           });
-          setExerciseList((prevList) => [...prevList, exerciseName]);
+          setExerciseList((prevList) => [
+            ...prevList,
+            { id: newRef.id, name: exerciseName },
+          ]);
           setExerciseName("");
         }
       } catch (error) {
         console.error("Error adding exercise: ", error);
       }
+    }
+  };
+
+  const handleDeleteExercise = async (exerciseId, exerciseName) => {
+    if (!auth.currentUser) return;
+    const confirmed = window.confirm(
+      `Delete exercise "${exerciseName}" and all associated workouts?`
+    );
+    if (!confirmed) return;
+    try {
+      const userId = auth.currentUser.uid;
+      const batch = writeBatch(db);
+
+      // Delete workouts tied to this exercise for the current user
+      const workoutsQuery = query(
+        collection(db, "workouts"),
+        where("userId", "==", userId),
+        where("exerciseName", "==", exerciseName)
+      );
+      const workoutsSnap = await getDocs(workoutsQuery);
+      workoutsSnap.forEach((w) => {
+        batch.delete(firestoreDoc(db, "workouts", w.id));
+      });
+
+      // Delete the exercise document
+      batch.delete(firestoreDoc(db, "exercises", exerciseId));
+
+      await batch.commit();
+
+      // Update local UI
+      setExerciseList((prev) => prev.filter((e) => e.id !== exerciseId));
+    } catch (error) {
+      console.error("Error deleting exercise and workouts:", error);
     }
   };
 
@@ -64,9 +102,10 @@ const ExercisePage = () => {
     navigate(`/log?exercise=${encodeURIComponent(exercise)}`);
   };
 
-  const filteredExercises = exerciseList.filter((exercise) =>
-    exercise.toLowerCase().includes(searchTerm)
-  );
+  const filteredExercises = exerciseList.filter((exercise) => {
+    const name = typeof exercise === "string" ? exercise : exercise.name || "";
+    return name.toLowerCase().includes(searchTerm);
+  });
 
   return (
     <div className="exercise-page">
@@ -103,8 +142,33 @@ const ExercisePage = () => {
         </thead>
         <tbody>
           {filteredExercises.map((exercise, index) => (
-            <tr key={index} onClick={() => handleRowClick(exercise)}>
-              <td>{exercise}</td>
+            <tr key={exercise.id || index}>
+              <td className="exercise-cell">
+                <span
+                  className="exercise-name"
+                  onClick={() => handleRowClick(exercise.name)}
+                >
+                  {exercise.name}
+                </span>
+                <button
+                  className="delete-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteExercise(exercise.id, exercise.name);
+                  }}
+                  onMouseEnter={(e) => {
+                    const tr = e.currentTarget.closest("tr");
+                    if (tr) tr.classList.add("no-row-hover");
+                  }}
+                  onMouseLeave={(e) => {
+                    const tr = e.currentTarget.closest("tr");
+                    if (tr) tr.classList.remove("no-row-hover");
+                  }}
+                  title={`Delete ${exercise.name}`}
+                >
+                  🗑️
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

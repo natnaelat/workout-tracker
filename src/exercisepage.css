@@ -92,6 +92,16 @@ tbody tr.no-row-hover:hover {
     display: flex;
     align-items: center;
     padding: 6px 12px;
+    padding-right: 100px; /* keep delete icon away from edge */
+}
+
+/* placeholder on the left to balance the delete icon + spacing so the name centers */
+.exercise-cell::before {
+    content: "";
+    display: inline-block;
+    /* match: delete width (28px) + cell padding-right (100px) = 128px */
+    width: 165px;
+    flex: 0 0 165px;
 }
 
 .delete-btn {
@@ -105,7 +115,7 @@ tbody tr.no-row-hover:hover {
     align-items: center;
     justify-content: center;
     padding: 0;
-    margin-right: 12px;
+    margin-left: auto; /* push icon to the right edge */
     cursor: pointer;
     font-size: 16px;
 }
@@ -123,6 +133,10 @@ tbody tr.no-row-hover:hover {
     text-align: center;
     cursor: pointer;
     color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100% - 128px); /* ensure it doesn't overlap the right-area */
 }
 
 /* row hover (when hovering the exercise) */
@@ -140,7 +154,9 @@ tbody tr.no-row-hover:hover {
 .delete-btn {
   background: transparent;
   color: #ffffff;        /* icon/text color when idle */
+  margin-left: auto; /* ensure it's pushed to the right */
 }
+
 
 /* trash hover: icon turns red and gets a subtle circular bg */
 .delete-btn:hover {

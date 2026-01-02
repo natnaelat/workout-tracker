@@ -100,8 +100,8 @@ tbody tr.no-row-hover:hover {
     content: "";
     display: inline-block;
     /* match: delete width (28px) + cell padding-right (100px) = 128px */
-    width: 165px;
-    flex: 0 0 165px;
+    width: 128px;
+    flex: 0 0 128px;
 }
 
 .delete-btn {
@@ -163,4 +163,9 @@ tbody tr.no-row-hover:hover {
   color: #e74c3c;                            /* icon color on hover */
   background: rgba(231,76,60,0.12);          /* light red translucent circle */
   border-radius: 50%;
+}
+
+.header-filter-btn {
+  /* existing rules... */
+  transform: translateY(6px); /* positive = moves the button down */
 }

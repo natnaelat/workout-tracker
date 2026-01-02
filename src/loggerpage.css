@@ -81,6 +81,80 @@ tbody tr:hover {
     background-color: #007acc; /* Lighter blue on row hover */
 }
 
+/* header filter button */
+.header-filter-btn {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    margin-left: 6px; /* small gap from the header text */
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-flex;        /* ensure it sits inline with the header text */
+    align-items: center;
+    justify-content: center;
+    width: 20px;                /* small square button */
+    height: 20px;
+    padding: 0;                 /* remove extra spacing */
+    line-height: 1;
+    vertical-align: middle;     /* align with header text baseline */
+    margin-top: 0;              /* prevent pushing below the header */
+}
+
+/* slight nudge for header cells with filter buttons: shift all header content (text + icon) to the right */
+.filter-th {
+    padding-left: 10px; /* adjust this value to fine-tune centering */
+    padding-right: 4px;
+}
+
+.filter-popover {
+    position: absolute;
+    top: 28px;
+    left: 0;
+    z-index: 20;
+    background: #1b1b1b;
+    border: 1px solid #444;
+    padding: 8px;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 90px;
+}
+
+/* shift weight popover slightly to the right so it aligns better */
+.filter-popover.weight-popover {
+    left: 55px; /* adjust this value as needed */
+}
+
+.filter-value {
+    background: transparent;
+    border: 1px solid #333;
+    color: #fff;
+    padding: 4px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: left;
+}
+
+.filter-value.selected {
+    background: rgba(30,144,255,0.12);
+    border-color: #1e90ff;
+}
+
+.filter-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.filter-actions button {
+    background: transparent;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+
 /* when hovering the delete or edit icon, prevent the row hover color */
 tbody tr.no-row-hover:hover {
     background-color: #1e1e1e; /* same as default row color */

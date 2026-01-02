@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { db, auth } from "./firebase"; // Import Firebase setup
 import {
@@ -32,6 +32,10 @@ const LogPage = () => {
   const [workoutHistory, setWorkoutHistory] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState({ weight: "", sets: "", reps: "", date: "" });
+  const [filters, setFilters] = useState({});
+  const [availableFilters, setAvailableFilters] = useState({ weight: [], sets: [], reps: [], date: [] });
+  const [filterOpen, setFilterOpen] = useState(null);
+  const popoverRef = useRef(null);
 
   // Fetch workout history for the current user and exercise
   useEffect(() => {
@@ -122,6 +126,55 @@ const LogPage = () => {
     }
   };
 
+  // Filter UI helpers
+  useEffect(() => {
+    // compute available filter values from current workoutHistory
+    const keys = ["weight", "sets", "reps", "date"];
+    const newAvail = {};
+    keys.forEach((k) => {
+      newAvail[k] = Array.from(
+        new Set(workoutHistory.map((w) => (w[k] !== undefined && w[k] !== null ? String(w[k]) : "")))
+      )
+        .filter(Boolean)
+        .sort((a, b) => a.localeCompare(b));
+    });
+    setAvailableFilters(newAvail);
+  }, [workoutHistory]);
+
+  useEffect(() => {
+    const onDocClick = (e) => {
+      if (filterOpen && popoverRef.current && !popoverRef.current.contains(e.target)) {
+        setFilterOpen(null);
+      }
+    };
+    document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
+  }, [filterOpen]);
+
+  const toggleFilterOpen = (col) => setFilterOpen((prev) => (prev === col ? null : col));
+
+  const applyFilter = (col, val) => {
+    setFilters((prev) => ({ ...prev, [col]: String(val) }));
+    setFilterOpen(null);
+  };
+
+  const clearFilter = (col) => {
+    setFilters((prev) => {
+      const copy = { ...prev };
+      delete copy[col];
+      return copy;
+    });
+    setFilterOpen(null);
+  };
+
+  const visibleHistory = workoutHistory.filter((entry) => {
+    for (const [col, val] of Object.entries(filters)) {
+      if (!val) continue;
+      if (String(entry[col]) !== String(val)) return false;
+    }
+    return true;
+  });
+
   return (
     <div>
       <h1>Workout Tracker</h1>
@@ -181,15 +234,115 @@ const LogPage = () => {
       <table>
         <thead>
           <tr>
-            <th>Weight (lbs)</th>
-            <th>Sets</th>
-            <th>Reps</th>
-            <th>Date</th>
+            <th className="filter-th" style={{position:'relative'}}>
+              Weight (lbs)
+              <button
+                className="header-filter-btn"
+                onClick={() => toggleFilterOpen('weight')}
+                title="Filter weight"
+              >
+                ⚙️
+              </button>
+              {filterOpen === 'weight' && (
+                <div className="filter-popover weight-popover" ref={popoverRef}>
+                  {availableFilters.weight.map((v) => (
+                    <button
+                      key={v}
+                      className={`filter-value ${filters.weight === v ? 'selected' : ''}`}
+                      onClick={() => applyFilter('weight', v)}
+                    >
+                      {v}
+                    </button>
+                  ))}
+                  <div className="filter-actions">
+                    <button onClick={() => clearFilter('weight')}>Clear</button>
+                  </div>
+                </div>
+              )}
+            </th>
+            <th className="filter-th" style={{position:'relative'}}>
+              Sets
+              <button
+                className="header-filter-btn"
+                onClick={() => toggleFilterOpen('sets')}
+                title="Filter sets"
+              >
+                ⚙️
+              </button>
+              {filterOpen === 'sets' && (
+                <div className="filter-popover" ref={popoverRef}>
+                  {availableFilters.sets.map((v) => (
+                    <button
+                      key={v}
+                      className={`filter-value ${filters.sets === v ? 'selected' : ''}`}
+                      onClick={() => applyFilter('sets', v)}
+                    >
+                      {v}
+                    </button>
+                  ))}
+                  <div className="filter-actions">
+                    <button onClick={() => clearFilter('sets')}>Clear</button>
+                  </div>
+                </div>
+              )}
+            </th>
+            <th className="filter-th" style={{position:'relative'}}>
+              Reps
+              <button
+                className="header-filter-btn"
+                onClick={() => toggleFilterOpen('reps')}
+                title="Filter reps"
+              >
+                ⚙️
+              </button>
+              {filterOpen === 'reps' && (
+                <div className="filter-popover" ref={popoverRef}>
+                  {availableFilters.reps.map((v) => (
+                    <button
+                      key={v}
+                      className={`filter-value ${filters.reps === v ? 'selected' : ''}`}
+                      onClick={() => applyFilter('reps', v)}
+                    >
+                      {v}
+                    </button>
+                  ))}
+                  <div className="filter-actions">
+                    <button onClick={() => clearFilter('reps')}>Clear</button>
+                  </div>
+                </div>
+              )}
+            </th>
+            <th className="filter-th" style={{position:'relative'}}>
+              Date
+              <button
+                className="header-filter-btn"
+                onClick={() => toggleFilterOpen('date')}
+                title="Filter date"
+              >
+                ⚙️
+              </button>
+              {filterOpen === 'date' && (
+                <div className="filter-popover" ref={popoverRef}>
+                  {availableFilters.date.map((v) => (
+                    <button
+                      key={v}
+                      className={`filter-value ${filters.date === v ? 'selected' : ''}`}
+                      onClick={() => applyFilter('date', v)}
+                    >
+                      {v}
+                    </button>
+                  ))}
+                  <div className="filter-actions">
+                    <button onClick={() => clearFilter('date')}>Clear</button>
+                  </div>
+                </div>
+              )}
+            </th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          {workoutHistory.map((entry, index) => (
+          {visibleHistory.map((entry, index) => (
             <tr key={entry.id || index}>
               {editingId === entry.id ? (
                 <>
